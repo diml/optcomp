@@ -5,6 +5,10 @@
 #
 # Generic Makefile for oasis project
 
+ifneq "$(NO_EXECUTABLES)" ""
+_DISABLE_EXES?= --disable-binaries
+endif
+
 # Set to setup.exe for the release
 SETUP := setup-dev.exe
 
@@ -51,9 +55,9 @@ distclean: $(SETUP)
 	./$(SETUP) -distclean $(DISTCLEANFLAGS)
 
 configure: $(SETUP)
-	./$(SETUP) -configure $(CONFIGUREFLAGS)
+	./$(SETUP) -configure $(CONFIGUREFLAGS) $(_DISABLE_EXES)
 
 setup.data: $(SETUP)
-	./$(SETUP) -configure $(CONFIGUREFLAGS)
+	./$(SETUP) -configure $(CONFIGUREFLAGS) $(_DISABLE_EXES)
 
 .PHONY: default build doc test all install uninstall reinstall clean distclean configure

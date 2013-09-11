@@ -18,6 +18,10 @@ Description:
   Optcomp is a syntax extension which handles cpp-like directives in
   ocaml source files. It uses camlp4 so it is more OCaml friendly.
 
+Flag binaries
+  Description: Build binaries
+  Default: true
+
 # +-------------------------------------------------------------------+
 # | The syntax extension                                              |
 # +-------------------------------------------------------------------+
@@ -36,14 +40,16 @@ Library optcomp
 # +-------------------------------------------------------------------+
 
 Executable "optcomp-o"
-  Install: true
+  Build$: flag(binaries)
+  Install$: flag(binaries)
   Path: src
   CompiledObject: best
   MainIs: optcomp_o.ml
   BuildDepends: camlp4.lib, optcomp
 
 Executable "optcomp-r"
-  Install: true
+  Build$: flag(binaries)
+  Install$: flag(binaries)
   Path: src
   CompiledObject: best
   MainIs: optcomp_r.ml
