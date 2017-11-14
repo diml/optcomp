@@ -84,9 +84,9 @@ let rec print mode current_fname current_line current_col files token_stream =
                 (* Go to the right position in the input. *)
                 if pos_in ic <> off then seek_in ic off;
                 (* Read the part to copy. *)
-                let str = String.create len in
-                really_input ic str 0 len;
-                (str, Loc.stop_line loc, Loc.stop_off loc - Loc.stop_bol loc)
+                let buf = Bytes.create len in
+                really_input ic buf 0 len;
+                (Bytes.to_string buf, Loc.stop_line loc, Loc.stop_off loc - Loc.stop_bol loc)
         in
         if current_fname = fname && current_line = line && current_col = col then
           (* If we at the right position, just print the string. *)
