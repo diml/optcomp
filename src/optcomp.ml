@@ -70,7 +70,7 @@ let rec print mode current_fname current_line current_col files token_stream =
             let ic = open_in fname in
             (ic, File_map.add fname ic files)
         in
-        let str, stop_line, stop_col =
+        let bytes, stop_line, stop_col =
           match tok with
             | QUOTATION { q_name = "optcomp"; q_contents = str } ->
                 let str =
@@ -79,18 +79,19 @@ let rec print mode current_fname current_line current_col files token_stream =
                      | R -> Pa_optcomp.string_of_value_r)
                     (Pa_optcomp.get_quotation_value str)
                 in
-                (str, line, col + String.length str)
+                let bytes = Bytes.of_string str in
+                (bytes, line, col + String.length str)
             | tok ->
                 (* Go to the right position in the input. *)
                 if pos_in ic <> off then seek_in ic off;
                 (* Read the part to copy. *)
-                let str = String.create len in
-                really_input ic str 0 len;
-                (str, Loc.stop_line loc, Loc.stop_off loc - Loc.stop_bol loc)
+                let bytes = Bytes.create len in
+                really_input ic bytes 0 len;
+                (bytes, Loc.stop_line loc, Loc.stop_off loc - Loc.stop_bol loc)
         in
         if current_fname = fname && current_line = line && current_col = col then
           (* If we at the right position, just print the string. *)
-          print_string str
+          print_bytes bytes
         else begin
           (* Otherwise print a location directive. *)
           if current_col > 0 then print_char '\n';
@@ -99,7 +100,7 @@ let rec print mode current_fname current_line current_col files token_stream =
           for i = 1 to col do
             print_char ' '
           done;
-          print_string str
+          print_bytes bytes
         end;
         print mode fname stop_line stop_col files token_stream
 
